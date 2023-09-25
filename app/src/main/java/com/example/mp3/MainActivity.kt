@@ -9,6 +9,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportFragmentManager.beginTransaction().replace(R.id.mainactivity,MusicList()).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.mainactivity, MusicList()).commit()
+
     }
 }

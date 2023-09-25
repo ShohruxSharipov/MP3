@@ -7,11 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
+import androidx.activity.OnBackPressedCallback
 import com.example.mp3.databinding.FragmentSingleMusicBinding
 import com.example.mp3.music.MP3
-import java.util.ResourceBundle.getBundle
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,6 +25,7 @@ class SingleMusic : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: Int? = null
     private var param2: String? = null
+    lateinit var media: MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,31 +39,48 @@ class SingleMusic : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentSingleMusicBinding.inflate(inflater,container,false)
-        val musicList = mutableListOf<MP3>()
-        musicList.add(MP3("Don't be shy",R.raw.m1))
-        musicList.add(MP3("New rules",R.raw.m2))
-        musicList.add(MP3("We don't talk anymo",R.raw.m3))
-        musicList.add(MP3("Dancin",R.raw.m4))
-//        musicList.add(MP3("Bad habits",R.raw.m5))
-        musicList.add(MP3("Shape of you",R.raw.m6))
-        musicList.add(MP3("One kiss",R.raw.m7))
-//        musicList.add(MP3("Rockby",R.raw.m8))
-        musicList.add(MP3("Solitude",R.raw.m9))
+        val binding = FragmentSingleMusicBinding.inflate(inflater, container, false)
+        val musiclist2 = mutableListOf<MP3>()
+        musiclist2.add(MP3("Don't be shy", R.raw.m1))
+        musiclist2.add(MP3("New rules", R.raw.m2))
+        musiclist2.add(MP3("We don't talk anymo", R.raw.m3))
+        musiclist2.add(MP3("Dancin", R.raw.m4))
+//        musiclist2.add(MP3("Bad habits",R.raw.m5))
+        musiclist2.add(MP3("Shape of you", R.raw.m6))
+        musiclist2.add(MP3("One kiss", R.raw.m7))
+//        musiclist2.add(MP3("Rockby",R.raw.m8))
+        musiclist2.add(MP3("Solitude", R.raw.m9))
         var a = param1!!
-        var media = MediaPlayer.create(requireContext(),musicList[a].music)
-        binding.musname.text = musicList[a].name
+        media = MediaPlayer.create(requireContext(), musiclist2[a].music)
+        binding.musname.text = musiclist2[a].name
         media.start()
-        Log.d("TAG", "RRR : $musicList")
+        val thread = Thread()
+        thread.start()
+
+        requireActivity()
+            .onBackPressedDispatcher
+            .addCallback(requireActivity(), object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    Log.d("TAG", "Fragment back pressed invoked")
+                    // Do custom work here
+                    media.stop()
+                    // if you want onBackPressed() to be called as normal afterwards
+                    if (isEnabled) {
+                        isEnabled = false
+                        requireActivity().onBackPressed()
+                    }
+                }
+            }
+            )
 
 
 
 
         binding.play.setOnClickListener {
-            if (media.isPlaying){
+            if (media.isPlaying) {
                 media.pause()
                 binding.play.setBackgroundResource(R.drawable.baseline_play_circle_24)
-            }else{
+            } else {
                 media.start()
                 binding.play.setBackgroundResource(R.drawable.baseline_pause_circle_24)
             }
@@ -72,24 +88,24 @@ class SingleMusic : Fragment() {
 
         binding.next.setOnClickListener {
             media.stop()
-            if (a < musicList.size - 1){
-                a = a + 1 }
-            else a = 0
-            media = MediaPlayer.create(requireContext(),musicList[a].music)
+            if (a < musiclist2.size - 1) {
+                a = a + 1
+            } else a = 0
+            media = MediaPlayer.create(requireContext(), musiclist2[a].music)
             binding.play.setBackgroundResource(R.drawable.baseline_pause_circle_24)
-            binding.musname.text = musicList[a].name
+            binding.musname.text = musiclist2[a].name
             media.start()
 
         }
 
         binding.prev.setOnClickListener {
             media.stop()
-            if (a > 0){
-                a = a - 1 }
-            else a = musicList.size-1
-            media = MediaPlayer.create(requireContext(),musicList[a].music)
+            if (a > 0) {
+                a = a - 1
+            } else a = musiclist2.size - 1
+            media = MediaPlayer.create(requireContext(), musiclist2[a].music)
             binding.play.setBackgroundResource(R.drawable.baseline_pause_circle_24)
-            binding.musname.text = musicList[a].name
+            binding.musname.text = musiclist2[a].name
             media.start()
 
         }
